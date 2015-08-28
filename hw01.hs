@@ -23,3 +23,14 @@ sumDigits = sum . concatMap toDigitsRev
 -- Validates credit card numbers
 validate :: Integer -> Bool
 validate = (==0) . flip rem 10 . sumDigits . doubleEveryOther . toDigitsRev
+
+-- Generates a list of moves
+-- Moves from peg a to peg b
+type Peg = String
+type Move = (Peg, Peg)
+hanoi :: Integer -> Peg -> Peg -> Peg -> [Move]
+hanoi 0 _ _ _ = []
+hanoi n a b c = (++) preMoves $ (a, b) : postMoves
+  where
+    preMoves = hanoi (n - 1) a c b
+    postMoves = hanoi (n - 1) c b a
