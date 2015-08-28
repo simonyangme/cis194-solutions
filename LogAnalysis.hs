@@ -4,15 +4,12 @@ module LogAnalysis where
 import Log
 
 parseMessage :: String -> LogMessage
-parseMessage s
-  | null ws = Unknown s
-  | otherwise = let (x:x':xs) = ws in case x of
-    "I" -> LogMessage Info (read x') (unwords xs)
-    "W" -> LogMessage Warning (read x') (unwords xs)
-    "E" -> let (y:ys) = xs in
-      LogMessage (Error (read x')) (read y) (unwords ys)
-    _ -> Unknown s
-  where ws = words s
+parseMessage = go . words
+  where go ("I":x':xs) = LogMessage Info (read x') (unwords xs)
+        go ("W":x':xs) = LogMessage Warning (read x') (unwords xs)
+        go ("E":x':xs) = let (y:ys) = xs in
+            LogMessage (Error (read x')) (read y) (unwords ys)
+        go xs = Unknown (unwords xs)
 
 parse :: String -> [LogMessage]
 parse = map parseMessage . lines
